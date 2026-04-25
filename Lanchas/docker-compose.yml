@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: tours-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: toursdb
+      POSTGRES_USER: tours_user
+      POSTGRES_PASSWORD: tours_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - tours_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  tours_postgres_data:

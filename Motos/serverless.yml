@@ -1,0 +1,66 @@
+service: new-motoparts
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: ${opt:stage, 'local'}
+  environment:
+    DYNAMODB_TABLE: ${self:custom.tableName}
+    DYNAMODB_ENDPOINT: ${env:DYNAMODB_ENDPOINT, ''}
+    AWS_REGION: ${self:provider.region}
+    NODE_ENV: ${self:provider.stage}
+
+plugins:
+  - serverless-offline
+
+custom:
+  tableName: ${self:service}-partes
+  serverless-offline:
+    httpPort: 3000
+    noPrependStageInUrl: true
+
+functions:
+  createParte:
+    handler: src/handlers/partes.createParte
+    events:
+      - http:
+          path: partes
+          method: post
+          cors: true
+  listPartes:
+    handler: src/handlers/partes.listPartes
+    events:
+      - http:
+          path: partes
+          method: get
+          cors: true
+  deleteParte:
+    handler: src/handlers/partes.deleteParte
+    events:
+      - http:
+          path: partes
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    PartesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: tipo
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tipo
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

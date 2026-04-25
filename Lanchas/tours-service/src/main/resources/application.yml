@@ -1,0 +1,22 @@
+micronaut:
+  application:
+    name: tours-service
+  server:
+    port: 8091
+    cors:
+      enabled: true
+
+datasources:
+  default:
+    # DB externa por defecto para poder conectarse con DBeaver/pgAdmin.
+    url: ${DB_URL:`jdbc:postgresql://localhost:5432/toursdb`}
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USER:tours_user}
+    password: ${DB_PASSWORD:tours_pass}
+    schema-generate: CREATE
+    dialect: POSTGRES
+
+netty:
+  default:
+    allocator:
+      max-order: 3
